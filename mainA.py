@@ -81,38 +81,26 @@ joined = r_neighbors.join(
     how="left"
 )
 
-# UDF to filter by Euclidean distance
-def filter_within_e(r_id, r_x, r_y, s_points):
-    if s_points is None:
-        return []
-    result = []
-    for s in s_points:
-        dist = math.hypot(r_x - s['s_x'], r_y - s['s_y'])
-        if dist <= e:
-            result.append((r_id, s['id']))
-    return result
-
 result_schema = ArrayType(StructType([
     StructField("r_id", StringType(), True),
     StructField("s_id", StringType(), True)
 ]))
 
-filter_udf = F.udf(filter_within_e, result_schema)
 
 # Apply distance filter
-filtered = joined.withColumn("matches", filter_udf("id", "r_x", "r_y", "s_points")) \
-                 .select(F.explode("matches").alias("match")) \
-                 .select(
-                     F.col("match.r_id").alias("r_id"),
-                     F.col("match.s_id").alias("s_id")
-                 )
+filtered = joined.withColumn("s_point", F.explode("s_points")) \
+    .filter(
+        ((F.col("r_x") - F.col("s_point.s_x")) ** 2 +
+         (F.col("r_y") - F.col("s_point.s_y")) ** 2) <= e * e
+    ) \
+    .select(
+        F.col("id").alias("r_id"),
+        F.col("s_point.id").alias("s_id")
+    )\
+    .distinct()
 
 # Save output
 result = filtered.count()
-
-with open(output_path) as f:
-    f.write(result)
-
-print("Filtered:", result)
-
+#TODO: write into file
+print("Result:", result)
 print("Done in", time.time() - start_time, "seconds.")
