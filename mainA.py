@@ -3,7 +3,7 @@ import math
 import sys
 from pyspark.sql import SparkSession, functions as F
 from pyspark.sql.types import (
-    StructType, StructField, StringType, FloatType, IntegerType,
+    StructType, StructField, StringType, DoubleType, IntegerType,
     ArrayType, StructType
 )
 
@@ -17,13 +17,13 @@ spark = SparkSession.builder.getOrCreate()
 # Schemas
 r_schema = StructType([
     StructField("id", StringType(), True),
-    StructField("r_x", FloatType(), True),
-    StructField("r_y", FloatType(), True)
+    StructField("r_x", DoubleType(), True),
+    StructField("r_y", DoubleType(), True)
 ])
 s_schema = StructType([
     StructField("id", StringType(), True),
-    StructField("s_x", FloatType(), True),
-    StructField("s_y", FloatType(), True)
+    StructField("s_x", DoubleType(), True),
+    StructField("s_y", DoubleType(), True)
 ])
 
 # Load R and S
