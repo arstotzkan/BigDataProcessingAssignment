@@ -96,8 +96,7 @@ filtered = joined.withColumn("s_point", F.explode("s_points")) \
     .select(
         F.col("id").alias("r_id"),
         F.col("s_point.id").alias("s_id")
-    )\
-    .distinct()
+    )
 
 # Save output
 result = filtered.count()

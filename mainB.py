@@ -102,8 +102,7 @@ filtered = joined.withColumn("s_point", F.explode("s_points")) \
     )\
     .filter(
         (F.col("s_count")) > k
-    )\
-    .distinct()
+    )
 
 # Save output
 result = filtered.count()
