@@ -12,6 +12,7 @@ OUTPUT_FILE="$2"
 
 hdfs dfs -ls "$HDFS_DIR" | awk '{print $8}' | while read -r file; do
   if [ -n "$file" ] && hdfs dfs -test -f "$file"; then
+    echo Downloading file: "$file"
     hdfs dfs -cat "$file" >> "$OUTPUT_FILE"
   fi
 done
